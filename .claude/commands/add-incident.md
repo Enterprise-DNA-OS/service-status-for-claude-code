@@ -1,3 +1,9 @@
+---
+description: "Add incident for the service communication desk."
+---
+
 # add-incident
 
 Run `npm run status -- add-incident` with the user's supplied arguments. Run `npm run status -- help --json` for the exact arguments. Use --json for structured analysis. Present the recorded facts and identify missing records. Never invent an owner, result, permission or evidence reference. Read the relevant record first. Require a named --actor and the user-supplied facts. For import, preview with --dry-run, reconcile the result, then apply the authorised file. Changed source records need explicit --update. Never send, publish or infer subscriber consent.
+
+Arguments: `add-incident --name=NAME --owner=NAME --components=API --next-update=ISO --actor=NAME`. Replace example values with facts supplied by the operator.
