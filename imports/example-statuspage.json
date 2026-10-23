@@ -1,0 +1,46 @@
+{
+  "page": {
+    "id": "demo-page",
+    "name": "Fictional migration sample"
+  },
+  "components": [
+    {
+      "id": "sample-api",
+      "name": "Sample API",
+      "status": "operational",
+      "description": "Fictional fixture"
+    }
+  ],
+  "incidents": [
+    {
+      "id": "sample-incident",
+      "name": "Sample delay",
+      "status": "resolved",
+      "impact": "minor",
+      "created_at": "2026-01-01T10:00:00Z",
+      "resolved_at": "2026-01-01T11:00:00Z",
+      "components": [
+        {
+          "id": "sample-api"
+        }
+      ],
+      "incident_updates": [
+        {
+          "id": "sample-update",
+          "body": "The sample backlog is clear.",
+          "status": "resolved",
+          "created_at": "2026-01-01T11:00:00Z"
+        }
+      ]
+    }
+  ],
+  "subscribers": [
+    {
+      "id": "sample-subscriber",
+      "email": "sample@example.test",
+      "component_ids": [
+        "sample-api"
+      ]
+    }
+  ]
+}

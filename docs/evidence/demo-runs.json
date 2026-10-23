@@ -1,0 +1,23 @@
+{
+  "captured": "2026-10-23T22:15:24.133Z",
+  "screens": [
+    {
+      "title": "Service health",
+      "ask": "Which services need attention?",
+      "command": "npm run status -- service-health",
+      "output": "  code    name             status                owner  open_incidents  maintenance_windows\n  ------  ---------------  --------------------  -----  --------------  -------------------\n  API     Customer API     degraded_performance  Mara   1               0                  \n  FILES   File delivery    partial_outage               1               0                  \n  PORTAL  Customer Portal  operational           Jules  0               2"
+    },
+    {
+      "title": "Update promises",
+      "ask": "Which updates are overdue or missing an owner?",
+      "command": "npm run status -- update-due",
+      "output": "  code     name                         status         owner  next_update_at            attention\n  -------  ---------------------------  -------------  -----  ------------------------  ---------\n  INC-102  Delayed file delivery        investigating         null                      unowned  \n  INC-101  Slow order lookups           identified     Mara   2026-10-23T21:40:12.457Z  overdue  \n  MW-201   Portal database maintenance  scheduled      Jules  2026-10-24T22:10:12.457Z  scheduled\n  MW-202   Portal network change        scheduled      Mara   2026-10-24T22:10:12.457Z  scheduled"
+    },
+    {
+      "title": "Maintenance conflicts",
+      "ask": "Which planned changes overlap on the same service?",
+      "command": "npm run status -- overlaps",
+      "output": "  first_window  second_window  component      \n  ------------  -------------  ---------------\n  MW-201        MW-202         Customer Portal"
+    }
+  ]
+}

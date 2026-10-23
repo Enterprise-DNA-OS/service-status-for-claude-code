@@ -1,11 +1,42 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "incident-brief",
+    "title": "Incident communication brief: draft",
+    "for_each": "select id,code from events where kind='incident'",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Recorded position",
+        "sql": "select code,name,status,impact,owner,next_update_at from events where id=$1"
+      },
+      {
+        "title": "Affected services",
+        "sql": "select c.name,c.status from event_components ec join components c on c.id=ec.component_id where ec.event_id=$1 order by c.name"
+      },
+      {
+        "title": "Recorded updates",
+        "sql": "select occurred_at,status,body from updates where event_id=$1 order by occurred_at,id"
+      }
+    ]
+  },
+  {
+    "name": "maintenance-notice",
+    "title": "Maintenance notice: draft",
+    "for_each": "select id,code from events where kind='maintenance'",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Planned window",
+        "sql": "select name,status,scheduled_for,scheduled_until,owner from events where id=$1"
+      },
+      {
+        "title": "Affected services",
+        "sql": "select c.name from event_components ec join components c on c.id=ec.component_id where ec.event_id=$1 order by c.name"
+      },
+      {
+        "title": "Updates",
+        "sql": "select occurred_at,status,body from updates where event_id=$1 order by occurred_at,id"
+      }
     ]
   }
 ]

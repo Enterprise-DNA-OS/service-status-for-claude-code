@@ -1,43 +1,51 @@
-# Service Status for Claude Code: operating instructions
+# Service Status for Claude Code
 
-This file is the brain. Claude Code reads it at the start of every session. It says who this is for, how work gets done, and the one right way to do each recurring job.
+This is a single-business service communication records system. Read README.md, then the matching recipe in .claude/commands. Every answer about business state starts with the CLI.
 
-## Who this is for
+## Commands
 
-- **Business:** [YOUR BUSINESS]
-- **Operator:** [YOUR NAME], [your role]
-- **What matters most:** [the one or two outcomes you care about]
+One CLI: scripts/status.mjs. Run npm run status -- help. Every command accepts --json. Exact codes, case-insensitive names and partial UUIDs resolve records. Ambiguous references list candidates and exit 1.
 
-Fill this in once. A worker with context knows. A worker without it guesses.
+- /help
+- /list
+- /show
+- /service-health
+- /update-due
+- /attention
+- /maintenance
+- /overlaps
+- /owner-load
+- /subscriber-review
+- /compliance
+- /activity
+- /history
+- /weekly-review
+- /impact
+- /add-component
+- /set-component
+- /add-incident
+- /schedule-maintenance
+- /log
+- /resolve
+- /review-subscriber
+- /opt-out
+- /import
+- /export
+- /draft-update
+- /draft-maintenance
+- /docs
+- /view
+- /customise
+- /new-view
 
-## How to work
+## Operating rules
 
-1. **Take a brief, not a script.** The operator describes the outcome. You run the right command and present the answer.
-2. **Read before you write.** Before drafting anything about a record, read its full history first.
-3. **Plain language.** Short sentences. No filler. Numbers in tables.
-4. **Silent success, loud problems.** No play-by-play. Say what broke and what you did about it.
-5. **Stop at the line.** Anything that sends, deletes, or faces a customer waits for a yes in this session.
+Read before writing. Require an actor and user-supplied facts for changes. Never infer permission, incident resolution or service recovery. Drafts stay in drafts/. Nothing sends or publishes. Do not start an early maintenance window or complete it before verification. Component observations are separate from incident resolution. Imported subscribers remain in review; preserve opt-outs. See docs/compliance.md for internal rules and the cited retention principle.
 
-## Routing table: one right way for each recurring job
+Use local PGlite unless DATABASE_URL explicitly selects a trusted PostgreSQL operator. Never seed a shared database. This is not a multi-tenant service and provides no individual logins. Keep real imports, drafts and reports private. Do not open files from .env in chat.
 
-| When the operator asks for... | Use this |
-|---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+## Changes
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+Migrations live in supabase/migrations. The one database adapter is scripts/lib/db.mjs. Brand, document and report definitions are brand.json, documents.json and views.json. Add tests for changes in behaviour and run npm test. TEST_DATABASE_URL must be an empty disposable database. Keep workflows in this one command library. No sends, publication or destructive record cleanup.
 
-## Hard rules
-
-- Never send email or messages from here. Draft to `drafts/`, a person sends.
-- Never delete records without an explicit yes in this session. Prefer marking closed or archived.
-- Never invent a record. If a name is ambiguous, list the candidates and ask.
-- The database is the source of truth. If the answer is not in it, say so.
-
-## Where things live
-
-- `scripts/` the CLI. `scripts/lib/db.mjs` picks `DATABASE_URL` (Postgres, Supabase) or the embedded database in `.data/`.
-- `supabase/migrations/` the schema, plain SQL. `npm run migrate` applies it.
-- `.claude/commands/` the slash commands. Add one every time the same ask comes twice.
-- `docs/` the thesis and the guide for moving off Atlassian Statuspage.
-
-Built by Enterprise DNA. Installed and run for you as part of Omni: https://enterprisedna.co/omni/instead-of/statuspage
+Omni by Enterprise DNA customises and runs the system for one setup fee, then a retainer.

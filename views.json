@@ -1,13 +1,38 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Service Status for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Service communications desk",
+    "subtitle": "Private working snapshot. Review before sharing.",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Update promises",
+        "sql": "select code,name,status,owner,next_update_at,attention from update_queue order by next_update_at nulls first"
+      },
+      {
+        "title": "Service health",
+        "sql": "select code,name,status,owner,open_incidents from service_health order by code"
+      }
+    ]
+  },
+  {
+    "name": "maintenance",
+    "title": "Maintenance windows",
+    "subtitle": "Internal planning snapshot",
+    "sections": [
+      {
+        "title": "Upcoming and open work",
+        "sql": "select code,name,status,scheduled_for,scheduled_until,components from maintenance_calendar order by scheduled_for"
+      }
+    ]
+  },
+  {
+    "name": "privacy",
+    "title": "Subscriber review",
+    "subtitle": "Private. Reference codes only.",
+    "sections": [
+      {
+        "title": "Purpose and retention checks",
+        "sql": "select code,channel,state,review_on,finding from subscriber_review where finding<>'current' order by code"
       }
     ]
   }

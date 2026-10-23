@@ -1,115 +1,99 @@
-<h1 align="center">Service Status for Claude Code</h1>
+# Service Status for Claude Code
 
-<p align="center">
-  <strong>The open-source service status system that is just a database and Claude Code.</strong>
-</p>
+Own the records behind your service updates: affected services, update promises, maintenance windows and subscriber review. Turn them into working briefs and read-only reports.
 
-<p align="center">
-  Created by <a href="https://www.enterprisedna.co"><strong>Enterprise DNA</strong></a>. Free and open source. Works with Claude Code, Codex, OpenCode or Cursor.
-</p>
+| Do it yourself | We customise it | We run it for you |
+|---|---|---|
+| Free, MIT. Install the working base. | Your service names, update rules, Statuspage records and notices. | Installed and operated through Omni by Enterprise DNA. One setup fee, then a retainer. |
 
-<!-- three-doors -->
-<table align="center">
-  <tr>
-    <td align="center"><strong>Do it yourself</strong><br/>Clone it, run it, own it. Free, MIT.<br/><a href="#quick-start">Quick start</a></td>
-    <td align="center"><strong>We customise it</strong><br/>Your fields, your rules, your Atlassian Statuspage data brought across.<br/><a href="https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=statuspage">Book a call</a></td>
-    <td align="center"><strong>We run it for you</strong><br/>Installed, connected and operated inside Omni. Setup fee, then a retainer.<br/><a href="https://enterprisedna.co/omni/instead-of/statuspage?utm_source=github&utm_medium=readme&utm_campaign=statuspage">How it works</a></td>
-  </tr>
-</table>
+[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=statuspage) · [Instead of Atlassian Statuspage](https://enterprisedna.co/omni/instead-of/statuspage)
 
-<p align="center">
-  <a href="#what-is-this">What is this</a> &bull;
-  <a href="#why-no-front-end">Why no front end</a> &bull;
-  <a href="#quick-start">Quick start</a> &bull;
-  <a href="#the-commands">Commands</a> &bull;
-  <a href="#instead-of-statuspage">Instead of Atlassian Statuspage</a> &bull;
-  <a href="#want-it-installed-and-run-for-you">Installed for you</a> &bull;
-  <a href="#license">License</a>
-</p>
+## Start with a working service desk
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node-20+-339933?style=flat-square" alt="Node 20+" />
-  <img src="https://img.shields.io/badge/PostgreSQL-any-336791?style=flat-square" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/PGlite-embedded-3ecf8e?style=flat-square" alt="PGlite" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="MIT License" />
-</p>
-
----
-
-## What is this
-
-Service Status for Claude Code does the job you pay Atlassian Statuspage for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Atlassian Statuspage dashboard cannot.
-
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Atlassian Statuspage per year, all in, with a source. -->
-
-Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=statuspage).
-
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
-
-## Why no front end
-
-- The front end was only ever there because the database was hard to talk to. That is no longer true.
-- Your data sits in plain Postgres tables you own. Any tool can read them. No export, no lock-in.
-- No seats, no tiers, no add-ons. Read [docs/why-no-front-end.md](docs/why-no-front-end.md) for the honest trade-offs too.
-
-## Quick start
-
-Sixty seconds, no database install (an embedded Postgres runs inside Node):
+Node 20 or later. Open the folder in Claude Code, Codex, OpenCode or Cursor. All runtimes use CLAUDE.md and the same command recipes.
 
 ```bash
-git clone https://github.com/Enterprise-DNA-OS/service-status-for-claude-code.git
-cd service-status-for-claude-code
 npm install
 npm run demo
+npm run status -- weekly-review
+npm run docs
+npm run view
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Local PGlite needs no separate database service. DATA_DIR selects another local directory. DATABASE_URL selects PostgreSQL with a trusted operator role. Never seed a shared database. This is a single-business operations database; it has no browser access or individual user accounts.
 
-### Use it with your own Postgres or Supabase
+The fictional Kauri Service Desk seed includes slow order lookups, delayed file delivery, overlapping portal maintenance and subscribers awaiting review. Dates are relative to the first seed. Repeating the seed preserves existing records.
 
-Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same commands, shared data, no per-seat fee.
+## The weekly rituals
 
-## The commands
+1. Monday: /weekly-review combines update promises, maintenance conflicts, service health and subscriber review.
+2. During disruption: /add-incident, /impact and /log record affected services, confirmed facts and the next update promise.
+3. Before planned work: /schedule-maintenance and /overlaps check shared service windows.
+4. Before communication: /draft-update or /draft-maintenance prepares wording from recorded facts. Nothing sends or publishes.
+5. On resolution: /resolve records the result. /set-component separately records the confirmed service condition.
+6. Each week: /subscriber-review and /compliance surface purpose and retention reviews.
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
+27 CLI commands and 31 slash-command recipes. Every CLI command accepts --json. Exact codes, case-insensitive names and partial UUIDs work. Ambiguous references list candidates and exit 1. Run npm run status -- help for arguments. Write commands require --actor. Read the matching recipe before changing records.
 
-| Command | What it does |
-|---|---|
-| `/...` | ... |
+Component status is an operator observation, not inferred from an incident closing: another incident can still affect the service. Maintenance moves through scheduled, in_progress, verifying and completed. A human supplies all facts; the program does not check uptime. Activity records preserve changes but database administrators can alter them. These are not tamper-proof audit records.
 
-## Instead of statuspage
+## Ten questions this build answers
 
-<!-- TODO(author): how to bring data across from Atlassian Statuspage; link docs/replace-statuspage.md -->
+These are tested queries over your records, not claims that another product cannot answer them.
 
-## Architecture
+1. Which promised updates are overdue? /update-due.
+2. Which incidents have no named owner? /attention.
+3. Which planned changes overlap on the same service? /overlaps.
+4. Which degraded services also have open incidents? /service-health.
+5. Who owns the largest open communication queue? /owner-load.
+6. Which services have not been reviewed in thirty days? /attention.
+7. Which subscribers need a purpose or retention review? /subscriber-review.
+8. How many reviewed subscribers match an affected service? /impact.
+9. What wording did we record as the incident changed? /history.
+10. Who changed a record and what did they say? /activity and the complete export.
 
+The thirty-day service check is a configurable working rule, not a legal deadline. Eligibility counts exclude opted-out, unreviewed and overdue-review subscribers. Component counts can overlap; do not add them to infer unique recipients.
+
+## Bring your Statuspage records
+
+```bash
+npm run status -- import statuspage --file=imports/example-subscribers.csv --actor="Your name" --dry-run
+npm run status -- import statuspage --file=imports/example-subscribers.csv --actor="Your name"
 ```
-service-status-for-claude-code/
-  CLAUDE.md                 how the operator wants this run (routing table + house rules)
-  AGENTS.md                 the same, for Codex / OpenCode / Cursor / Gemini CLI
-  .claude/commands/         the slash commands
-  scripts/                  the CLI the commands drive
-  scripts/lib/db.mjs        one adapter: DATABASE_URL (pg) or embedded PGlite
-  supabase/migrations/      plain SQL schema
-  supabase/seed.sql         demo data
-  docs/                     the thesis and the migration guide
-```
 
-## Built for coding agents
+Replace the fictional sample with your subscriber CSV or JSON export. Public API JSON responses for components, incidents and scheduled maintenance also work. Import components before linked history, or provide a combined JSON bundle. The importer preserves original columns, checks the whole file in one transaction and leaves every new subscriber in review. Repeat imports are unchanged; changed source records require --update. Existing local opt-outs stay opted out. [Export steps and mapping](docs/replace-statuspage.md).
 
-The database, CLI and command recipes work with Claude Code, Codex, OpenCode or Cursor. Ask your coding agent for a new command and have it implement and test the change against the same records.
+An export is not proof of permission to contact someone. Review the purpose, evidence, review date and component selection before marking a subscriber active. The base sends nothing, even for active subscribers. Private incident history, audience permissions, Slack subscribers, metrics and integrations need separate migration work.
 
-## Contributing
+## Paperwork and read-only reports
 
-Issues and pull requests are welcome. Keep the shape: plain SQL, a small CLI, a slash command per recurring job, no front end.
+Change brand.json once. npm run docs writes incident communication briefs and maintenance notices under docs-out/. npm run view writes the working week, maintenance calendar and subscriber review reports under views/. All are private local files, excluded from version control. Print to PDF after review. Draft wording is under drafts/.
 
-## Want it installed and run for you?
+[What a screen adds](docs/why-no-front-end.md) covers production hosting, live updates, mobile use, self-service subscriptions and delivery. Those are custom implementation work with Enterprise DNA. Keep the existing customer notification service running until its replacement is tested. The free base is useful for the records and preparation work on its own.
 
-Enterprise DNA installs Service Status for Claude Code for your business, migrates your Atlassian Statuspage data, connects it to the rest of your tools, and runs it for you as part of **Omni**, our managed Command Center. One setup fee, then a monthly retainer.
+## Your first hour: ten things to ask for
 
-- Book a call: [enterprisedna.co/omni/book](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=statuspage)
-- Read more: [enterprisedna.co/omni/instead-of/statuspage](https://enterprisedna.co/omni/instead-of/statuspage?utm_source=github&utm_medium=readme&utm_campaign=statuspage)
+1. Put our name and logo on the incident brief.
+2. Import our subscriber list as a test run.
+3. Map our export's contact heading.
+4. Add the services our customers use.
+5. Assign an owner to each service.
+6. Change our service review interval.
+7. Show update promises due today.
+8. Group maintenance by service owner.
+9. Add a recovery evidence field.
+10. Draft the next maintenance notice.
 
-## License
+/customise adds a migration, validation and tests for your requested change. /new-view adds a read-only report. No second command library and no separate repository per coding agent.
 
-MIT. Copyright (c) 2026 Enterprise DNA.
+## Verification
+
+npm test uses an isolated temporary database, migrates and seeds twice, exercises every command and tests transitions, failed-import rollback, repeat imports, opt-out preservation, audience counts, escaped HTML, denied public reads and CLI failures. The manual workflow tests Node 20/22 on Linux and Windows and PostgreSQL 17. Check the workflow result before claiming an environment passed. TEST_DATABASE_URL must name an empty disposable database.
+
+## The price and the scope
+
+Atlassian lists Statuspage Enterprise at US$1,499 a month: US$17,988 over twelve months at that rate. This is published-rate arithmetic, not a customer invoice. Lower plans exist. [Vendor pricing](https://www.atlassian.com/software/statuspage/pricing), checked 23 October 2026. [Research and selection](docs/research.md).
+
+Enterprise DNA builds your version around your services, brings across agreed records and adds hosting, access controls and notification connections when agreed. Omni by Enterprise DNA operates it for one setup fee, then a retainer. [Book 30 minutes with Sam](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=statuspage).
+
+MIT. Not affiliated with Atlassian or Anthropic. Hosting, delivery and coding-agent usage have their own costs.
