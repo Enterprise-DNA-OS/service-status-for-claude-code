@@ -71,8 +71,8 @@ async function importStatuspage(db,o){
      values={code:'SP-'+sourceId,name:row.name,kind:type,status:row.status,impact:row.impact||'none',started_at:started,resolved_at:end,scheduled_for:type==='maintenance'?date(row.scheduled_for,'scheduled_for'):null,scheduled_until:type==='maintenance'?date(row.scheduled_until,'scheduled_until'):null,source_id:sourceId,source_data:JSON.stringify(row)};
     }
     if(seen.has(sourceId))throw Error(`Duplicate ${key} source id: ${sourceId}`);seen.add(sourceId);
-    let old=(await db.query(`select * from ${kind} where source_id=$1`,[sourceId]))[0];
-    if(!old&&kind==='subscribers')old=(await db.query('select * from subscribers where channel=$1 and contact=$2',[values.channel,values.contact]))[0];
+    let old=(await db.query(`select * from ${kind} where source_id=$1 for update`,[sourceId]))[0];
+    if(!old&&kind==='subscribers')old=(await db.query('select * from subscribers where channel=$1 and contact=$2 for update',[values.channel,values.contact]))[0];
     if(old&&equal(old.source_data,row)){counts.unchanged++;continue;}
     if(old&&!o.update)throw Error(`Changed ${kind} ${old.code}: use --update after review`);
     if(old){delete values.code;if(kind==='subscribers'){if(old.state==='opted_out')values.state='opted_out';else if(old.contact!==values.contact || old.channel!==values.channel || !equal(old.source_data?.component_ids,row.component_ids))values.state='review';else delete values.state;}}
@@ -107,12 +107,13 @@ export async function run(db,cmd,o={},pos=[]){
   return db.query(`select c.code,c.name,c.status,count(distinct s.id)::integer as eligible_subscribers from event_components ec join components c on c.id=ec.component_id left join subscribers s on s.state='active' and s.review_on>=current_date and (not exists(select 1 from subscriber_components sc where sc.subscriber_id=s.id) or exists(select 1 from subscriber_components sc where sc.subscriber_id=s.id and sc.component_id=c.id)) where ec.event_id=$1 group by c.id order by c.code`,[e.id]);
  }
  if(cmd==='import'){if(pos[0]!=='statuspage')throw Error('Use import statuspage');return importStatuspage(db,o);}
- if(cmd==='export'){
+ if(cmd==='export')return transaction(db,async()=>{
+  await db.exec('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY');
   const file=required(o,'file');let result;
   if(o.kind){if(!kinds[o.kind])throw Error('Unknown --kind');result=await db.query(`select * from ${kinds[o.kind]} order by id`);}else{result={};for(const t of ['components','events','event_components','updates','subscribers','subscriber_components','activity'])result[t]=await db.query(`select * from ${t} order by id`);}
   let content=JSON.stringify(result,null,2)+'\n';if(file.endsWith('.csv')){if(!Array.isArray(result))throw Error('CSV export requires --kind');const keys=result.length?Object.keys(result[0]):[];const cell=v=>'"'+String(v==null?'':typeof v==='object'?JSON.stringify(v):v).replace(/"/g,'""')+'"';content=[keys.map(cell).join(','),...result.map(r=>keys.map(k=>cell(r[k])).join(','))].join('\r\n')+'\r\n';}
   fs.mkdirSync(path.dirname(path.resolve(file)),{recursive:true,mode:0o700});fs.writeFileSync(file,content,{flag:'wx',mode:0o600});return [{file:path.resolve(file),records:Array.isArray(result)?result.length:Object.values(result).reduce((n,a)=>n+a.length,0)}];
- }
+ });
  if(cmd.startsWith('draft-')){
   const e=await resolve(db,'events',required(o,'ref'));if(cmd==='draft-maintenance'&&e.kind!=='maintenance')throw Error('Choose a maintenance window');
   const history=await db.query('select body,status,occurred_at from updates where event_id=$1 order by occurred_at,id',[e.id]);
