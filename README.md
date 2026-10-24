@@ -6,7 +6,7 @@ Own the records behind your service updates: affected services, update promises,
 |---|---|---|
 | Free, MIT. Install the working base. | Your service names, update rules, Statuspage records and notices. | Installed and operated through Omni by Enterprise DNA. One setup fee, then a retainer. |
 
-[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=statuspage) · [Instead of Atlassian Statuspage](https://enterprisedna.co/omni/instead-of/statuspage)
+[Get your version built](https://enterprisedna.co/omni/book/?offer=replace-software&utm_source=github&utm_medium=readme&utm_campaign=statuspage) · [Instead of Atlassian Statuspage](https://enterprisedna.co/omni/instead-of/statuspage?utm_source=github&utm_medium=readme&utm_campaign=statuspage)
 
 ## Start with a working service desk
 
